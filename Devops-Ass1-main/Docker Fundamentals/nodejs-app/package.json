@@ -1,0 +1,9 @@
+{
+  "name": "vansh-nodejs-hello-world",
+  "version": "1.0.0",
+  "description": "Vansh's Hello World Node.js app for Docker",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  }
+}
