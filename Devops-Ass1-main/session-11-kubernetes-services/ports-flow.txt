@@ -1,0 +1,13 @@
+  Client (browser / curl)
+        |
+        v
+  [ nodePort: 30080 ]   <-- opened on EVERY node IP, range 30000-32767
+        |
+        v
+  [ port: 80 ]          <-- the Service's own ClusterIP port (in-cluster consumers)
+        |
+        v
+  [ targetPort: 80 ]    <-- pod-side port that kube-proxy forwards to
+        |
+        v
+  [ containerPort: 80 ] <-- what nginx actually listens on inside the container

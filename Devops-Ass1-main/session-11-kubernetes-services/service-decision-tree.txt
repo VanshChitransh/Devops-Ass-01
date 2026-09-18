@@ -1,0 +1,40 @@
+=========================== SERVICE SELECTION DECISION TREE ===========================
+
+Need to expose the service OUTSIDE the cluster?
+|
++-- NO  --> Need direct pod-to-pod discovery (Kafka / Cassandra / a DB cluster)?
+|             +-- YES --> HEADLESS SERVICE   (clusterIP: None)
+|             +-- NO  --> CLUSTERIP          (the default)
+|
++-- YES --> Pointing at an external third-party domain (RDS / Stripe / an API)?
+              +-- YES --> EXTERNALNAME       (CoreDNS CNAME alias, no proxying)
+              +-- NO  --> On a public cloud (AWS / GCP / Azure)?
+                            +-- YES, HTTP(S) --> ONE INGRESS behind ONE LOADBALANCER,
+                            |                    every app stays a ClusterIP
+                            +-- YES, TCP/UDP --> LOADBALANCER directly
+                            +-- NO (on-prem / dev) --> NODEPORT
+
+========================= CLOUD COST: WHY 50 LOADBALANCERS HURT =========================
+
+  ANTI-PATTERN - one cloud LB per microservice (~$18-25/mo each, plus data processing):
+
+      svc-a --> [ NLB #1  $25/mo ] --> ClusterIP A
+      svc-b --> [ NLB #2  $25/mo ] --> ClusterIP B
+      svc-c --> [ NLB #3  $25/mo ] --> ClusterIP C
+        ...        ...                    ...
+      50 services  =  50 x $25  =  $1,250 / month
+
+  BEST PRACTICE - one LB, one Ingress controller, L7 host/path routing:
+
+      Internet --> [ 1 x LB  $25/mo ]
+                          |
+                          v
+                 [ NGINX Ingress Controller ]
+                   |         |         |
+                   v         v         v
+              ClusterIP A  ClusterIP B  ClusterIP C   ... x50
+
+      50 services  =  1 x $25  =  $25 / month          SAVING: $1,225 / month
+
+  The Ingress controller itself is just pods, so scaling to 50 backends costs
+  CPU/memory, not another billable cloud load balancer.
