@@ -9,15 +9,9 @@ connected to multiple networks** so it can bridge the frontend and the database.
 
 | Container | Image | Network(s) |
 |---|---|---|
-| frontend | vansh-nginx-app | frontend-net |
-| backend | vansh-nginx-app | backend-net + frontend-net + db-net |
-| database | vansh-nginx-app | db-net |
-
-> Note: all three tiers run `vansh-nginx-app` - the image I built myself in the
-> `Docker Fundamentals` folder. What this task actually tests is the networking
-> (multiple networks, DNS by container name, isolation between networks), and that is
-> identical whatever server sits in each tier. Using my own image also makes the
-> connectivity output easy to recognise: a successful request returns my own page.
+| frontend | nginx:alpine | frontend-net |
+| backend | nginx:alpine | backend-net + frontend-net + db-net |
+| database | mysql:8.0 | db-net |
 
 ### Create 3 networks
 ```bash
@@ -29,9 +23,9 @@ docker network ls
 
 ### Create the 3 containers
 ```bash
-docker run -d --name frontend --network frontend-net vansh-nginx-app
-docker run -d --name backend  --network backend-net  vansh-nginx-app
-docker run -d --name database --network db-net       vansh-nginx-app
+docker run -d --name frontend --network frontend-net nginx:alpine
+docker run -d --name database --network db-net -e MYSQL_ROOT_PASSWORD=rootpass mysql:8.0
+docker run -d --name backend  --network backend-net nginx:alpine
 ```
 
 ### Add the backend to 2 more networks
@@ -39,20 +33,20 @@ docker run -d --name database --network db-net       vansh-nginx-app
 docker network connect frontend-net backend
 docker network connect db-net backend
 
-# backend is on networks: backend-net db-net frontend-net
+docker inspect backend --format '{{range $n,$v := .NetworkSettings.Networks}}{{$n}} {{end}}'
+# backend-net db-net frontend-net
 ```
 
 ### Check connectivity
 ```bash
 # backend -> frontend (shared frontend-net): SUCCESS
-docker exec backend wget -qO- http://frontend        # returns my Nginx page
+docker exec backend wget -qO- http://frontend | head -n 5   # returns nginx welcome page
 
 # backend -> database (shared db-net): SUCCESS
-docker exec backend wget -qO- http://database        # returns my Nginx page
+docker exec backend nc -z database 3306; echo "exit code: $?"    # exit code: 0
 
-# frontend -> database (no shared network): FAILS, the name will not even resolve
-docker exec frontend wget -qO- --timeout=5 http://database
-# wget: bad address 'database'      (exit status 1)
+# frontend -> database (different networks): FAILS (isolated)
+docker exec frontend nc -z database 3306; echo "exit code: $?"   # nc: bad address 'database', exit code: 1
 ```
 
 **What I understood:** Containers on the **same** Docker network can reach each other by
@@ -66,26 +60,21 @@ database, while the frontend still cannot reach the database directly - which is
 ## Task 2: Host Network
 
 ```bash
-docker run -d --name web-host --network host vansh-apache-app
-docker ps --filter name=web-host   # note: the PORTS column is EMPTY
-
-# fetch it from inside the container, straight off the host's own port 80.
-# httpd:2.4 ships no curl/wget, so I used bash's built-in /dev/tcp:
-docker exec web-host bash -c 'exec 3<>/dev/tcp/localhost/80; \
-  printf "GET / HTTP/1.0\r\n\r\n" >&3; cat <&3'
-# HTTP/1.1 200 OK ... <h1>Hello World from Vansh's Apache HTTP Server!</h1>
+docker run -d --name web-host --network host nginx:alpine
+docker ps                                   # note: host network shows NO port mapping
+curl -s http://localhost:80 | head -n 5     # from my Mac: empty (see note below)
+docker exec web-host wget -qO- http://localhost:80 | head -n 5   # inside the host netns: nginx welcome page
 ```
 
 **What I understood:** With `--network host`, the container shares the host's network
-directly - no port mapping (`-p`) is needed, and the service is available on the host's own
+directly - no port mapping (`-p`) is needed, and the service listens on the host's own
 port 80.
 
-> Note: I ran my own `vansh-apache-app` image (built on `httpd:2.4`) for this task. On a
-> native Linux host, `--network host` makes the server reachable directly at
-> `http://localhost:80` from the host. I am on Docker Desktop for Mac, where the container
-> joins the *Docker VM's* network namespace rather than macOS's, so I verified it from
-> inside that namespace - which is exactly where the host network lives. The
-> point of the task still holds: no `-p` flag was used and the `PORTS` column is empty.
+> Note: I ran this on Docker Desktop for Mac. There the "host" is the Linux VM that Docker
+> Desktop runs, not my Mac itself, so `curl http://localhost:80` from the Mac terminal
+> returned nothing, while the same request from inside the container's (host) network
+> namespace returned the nginx page. On a native Linux host `curl http://localhost:80`
+> works directly.
 
 ![Task 2 - host network](screenshots/image2.png)
 
@@ -93,24 +82,28 @@ port 80.
 
 ```bash
 # Create a local folder and file
-mkdir site
-echo "<h1>Hello from Vansh's bind mount</h1>" > site/index.html
+mkdir -p site
+echo "<h1>Hello students</h1>" > site/index.html
 
-# Bind mount the folder into Nginx (:ro = read-only inside the container)
-docker run -d --name nginx-bind -p 8090:80 \
-  -v "$(pwd)/site":/usr/share/nginx/html:ro vansh-nginx-app
+# Bind mount the folder into Nginx
+docker run -d --name nginx-bind -p 8090:80 -v "$(pwd)/site":/usr/share/nginx/html:ro nginx:alpine
 
 # Access it
-curl http://localhost:8090      # <h1>Hello from Vansh's bind mount</h1>
+curl http://localhost:8090      # <h1>Hello students</h1>
 
 # Modify the file WITHOUT restarting the container
-echo "<h1>Hello from Vansh's bind mount - edited live, no rebuild!</h1>" > site/index.html
-curl http://localhost:8090      # <h1>Hello from Vansh's bind mount - edited live, no rebuild!</h1>
+echo "<h1>Hello students - content updated live!</h1>" > site/index.html
+curl http://localhost:8090      # <h1>Hello students - content updated live!</h1>
 ```
 
 **What I understood:** A bind mount links a folder on my machine directly into the
 container. Any edit I make to the local file appears immediately inside the container - no
 rebuild or restart needed. This is very useful during development.
+
+> Note: I ran this from a `bind-mount-demo` folder outside `~/Documents`. When I first tried
+> from inside Documents, the container start hung because macOS had not granted Docker
+> Desktop access to the Documents folder. A copy of the `site/index.html` used is kept in
+> this folder.
 
 ![Task 3 - bind mount](screenshots/image3.png)
 

@@ -1,0 +1,15 @@
+# A PersistentVolume created by hand (static provisioning), backed by a node directory
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: vansh-pv
+  labels: {owner: vansh}
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes: ["ReadWriteOnce"]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: /tmp/vansh-pv-data
+    type: DirectoryOrCreate

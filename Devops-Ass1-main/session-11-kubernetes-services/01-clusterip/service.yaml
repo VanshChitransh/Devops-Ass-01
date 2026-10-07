@@ -1,14 +1,15 @@
+# ClusterIP: reachable only inside the cluster, service port 8080 -> container port 80
 apiVersion: v1
 kind: Service
 metadata:
   name: web-service-clusterip
   labels:
-    app: web-clusterip
+    owner: vansh
 spec:
   type: ClusterIP
   selector:
     app: web-clusterip
   ports:
-    - protocol: TCP
-      port: 8080
+    - port: 8080
       targetPort: 80
+      protocol: TCP

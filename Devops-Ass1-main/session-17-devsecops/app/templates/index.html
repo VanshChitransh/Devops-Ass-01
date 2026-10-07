@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ app_name }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <main>
+    <h1>{{ app_name }}</h1>
+    <p>Version {{ version }}. Built by Vansh for Session 17: every change goes through tests, SAST, SCA, secret scanning and an image scan before it ships.</p>
+    <ul>
+      <li><code>GET /health</code></li>
+      <li><code>GET /api/status</code></li>
+      <li><code>POST /api/add</code> with <code>{"number1": 10, "number2": 20}</code></li>
+      <li><code>POST /api/multiply</code></li>
+    </ul>
+  </main>
+</body>
+</html>

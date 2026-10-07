@@ -1,0 +1,4 @@
+body { font-family: system-ui, sans-serif; background: #f5f7fa; color: #1f2933; margin: 0; }
+main { max-width: 640px; margin: 4rem auto; background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,.08); }
+h1 { margin-top: 0; color: #0b5fff; }
+code { background: #eef2ff; padding: .1rem .35rem; border-radius: 4px; }

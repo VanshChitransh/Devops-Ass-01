@@ -1,13 +1,11 @@
-# Exit code 1 with restartPolicy Never => Pod phase Failed.
 apiVersion: v1
 kind: Pod
 metadata:
   name: lifecycle-failed
-  labels:
-    demo: lifecycle
+  labels: {owner: vansh, demo: lifecycle}
 spec:
   restartPolicy: Never
   containers:
-    - name: busybox
-      image: busybox
-      command: ["sh", "-c", "exit 1"]
+    - name: job
+      image: busybox:1.36
+      command: ["sh", "-c", "echo 'something went wrong'; exit 1"]

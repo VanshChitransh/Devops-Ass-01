@@ -6,8 +6,8 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
-		fmt.Fprintln(res, "Hello World from Docker multi-stage build")
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "Hello World from Docker multi-stage build")
 	})
 
 	fmt.Println("Server listening on port 8080")

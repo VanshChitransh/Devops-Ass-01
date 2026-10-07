@@ -1,7 +1,7 @@
 # Docker Multi-Stage Build - Homework
 
-**Name:** Vansh
-**Enrollment Number:** vansh.24bcs10015
+**Name:** Vansh Chitransh
+**Enrollment Number:** <24BCS10015>
 
 ## Task 1: Multi-Stage Dockerfile
 
@@ -20,8 +20,8 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
-		fmt.Fprintln(res, "Hello World from Docker multi-stage build")
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "Hello World from Docker multi-stage build")
 	})
 
 	fmt.Println("Server listening on port 8080")
@@ -35,20 +35,20 @@ func main() {
 FROM golang:1.23-alpine AS build
 WORKDIR /app
 COPY main.go ./
-RUN CGO_ENABLED=0 go build -o webapp main.go
+RUN CGO_ENABLED=0 go build -o server main.go
 
 # ---- Stage 2: Run ----
 FROM alpine:3.20
 WORKDIR /app
-COPY --from=build /app/webapp ./
+COPY --from=build /app/server ./
 EXPOSE 8080
-CMD ["./webapp"]
+CMD ["./server"]
 ```
 
 ### Build and run
 ```bash
-docker build -t vansh-multistage-app .
-docker run -d -p 8080:8080 --name vansh-multistage vansh-multistage-app
+docker build -t multistage-app .
+docker run -d -p 8080:8080 --name multistage multistage-app
 ```
 
 ### Verify the application
@@ -60,13 +60,13 @@ Hello World from Docker multi-stage build
 ### Verify the running container (docker ps)
 ```bash
 $ docker ps
-CONTAINER ID   IMAGE                  COMMAND      CREATED          STATUS          PORTS                                         NAMES
-427212b7b87f   vansh-multistage-app   "./webapp"   35 minutes ago   Up 35 minutes   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp   vansh-multistage
+NAMES        IMAGE            STATUS         PORTS
+multistage   multistage-app   Up 2 seconds   0.0.0.0:8080->8080/tcp
 ```
 The application is confirmed running on **port 8080**.
 
 ### Result of multi-stage build
-The final image is only about **16 MB**, because the Go compiler and source code stay in
+The final image is only about **25 MB**, because the Go compiler and source code stay in
 the build stage and only the compiled binary is copied into the final Alpine image.
 
 ## Task 2: Screenshots
@@ -84,17 +84,17 @@ Application running successfully in the browser:
 Three different types of applications were deployed using Docker (see the
 `Docker Fundamentals` folder for the full code and Dockerfiles):
 
-| Application | Language / Stack | Host port | Output |
+| Application | Language / Stack | Port | Output |
 |---|---|---|---|
-| Node.js | Node.js 20 (built-in `http`) | 3000 | Hello World from Vansh's Node.js app! |
-| Python | Python 3.12 + Flask | 5001 | Hello World from Vansh's Python (Flask) app! |
-| Java | Java 21 (built-in `HttpServer`) | 8080 | Hello World from Vansh's Java app! |
+| Node.js | Node.js (http server) | 3000 | Hello World from Node.js! |
+| Python | Python (Flask) | 5000 | Hello World from Python (Flask)! |
+| Java | Java (HttpServer) | 8080 | Hello World from Java! |
 
 Build and run example (Node.js):
 ```bash
 cd nodejs-app
-docker build -t vansh-nodejs-app .
-docker run -d -p 3000:3000 vansh-nodejs-app
+docker build -t nodejs-app .
+docker run -d -p 3000:3000 nodejs-app
 # open http://localhost:3000
 ```
 

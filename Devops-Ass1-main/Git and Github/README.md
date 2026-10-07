@@ -31,21 +31,27 @@ Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git restore <file>..." to discard changes in working directory)
 	modified:   notes.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
 ```
 Nothing was committed, because the change was never staged.
 
 Now use `-a -m`:
 ```bash
 $ git commit -a -m "commit tracked change with -a"
-[main 2a47f0b] commit tracked change with -a
+[main 612892d] commit tracked change with -a
  1 file changed, 1 insertion(+)
 
 $ git log --oneline
-2a47f0b commit tracked change with -a
-b16997c Initial commit with notes.txt
+612892d commit tracked change with -a
+94b7fe8 Initial commit with notes.txt
 ```
 
 **What I understood:** `-a` is a shortcut that stages all tracked file changes so I don't have to run `git add` separately. Plain `git commit -m` only records what I already staged. `-a` still won't pick up new (untracked) files.
+
+### Screenshot
+
+![Task 1 - git commit -m vs git commit -a -m](screenshots/task1-commit-a.png)
 
 
 
@@ -60,10 +66,10 @@ echo "featureB" > b.txt; git add b.txt; git commit -m "Add feature B"
 git log --oneline
 ```
 ```
-b536f04 Add feature B
-5a40d21 Add feature A
-2a47f0b commit tracked change with -a
-b16997c Initial commit with notes.txt
+526f377 Add feature B
+2101e13 Add feature A
+612892d commit tracked change with -a
+94b7fe8 Initial commit with notes.txt
 ```
 
 ### Step 2 - Create a new branch and make commits on it
@@ -75,24 +81,25 @@ echo "y" > y.txt; git add y.txt; git commit -m "Feature branch: add y.txt"
 git log --oneline
 ```
 ```
-7aa7fa8 Feature branch: add y.txt
-48d103f Feature branch: IMPORTANT fix in fix.txt
-92def40 Feature branch: add x.txt
-b536f04 Add feature B
-5a40d21 Add feature A
+9834c32 Feature branch: add y.txt
+d7fd35f Feature branch: IMPORTANT fix in fix.txt
+04acfe3 Feature branch: add x.txt
+526f377 Add feature B
+2101e13 Add feature A
 ...
 ```
 
 ### Step 3 - Identify the specific commit
-The commit I want is the IMPORTANT fix: `48d103f`.
+The commit I want is the IMPORTANT fix: `d7fd35f`.
 
 ### Step 4 - Cherry-pick that one commit onto main
 ```bash
 git checkout main
-git cherry-pick 48d103f
+git cherry-pick d7fd35f
 ```
 ```
-[main b7d3296] Feature branch: IMPORTANT fix in fix.txt
+[main 72a4e3c] Feature branch: IMPORTANT fix in fix.txt
+ Date: Thu Sep 3 21:19:23 2026 +0530
  1 file changed, 1 insertion(+)
  create mode 100644 fix.txt
 ```
@@ -100,11 +107,11 @@ git cherry-pick 48d103f
 ### Step 5 - Verify
 ```bash
 $ git log --oneline
-b7d3296 Feature branch: IMPORTANT fix in fix.txt
-b536f04 Add feature B
-5a40d21 Add feature A
-2a47f0b commit tracked change with -a
-b16997c Initial commit with notes.txt
+72a4e3c Feature branch: IMPORTANT fix in fix.txt
+526f377 Add feature B
+2101e13 Add feature A
+612892d commit tracked change with -a
+94b7fe8 Initial commit with notes.txt
 
 $ ls
 a.txt  b.txt  fix.txt  notes.txt
@@ -112,5 +119,9 @@ a.txt  b.txt  fix.txt  notes.txt
 `fix.txt` is now on main, but `x.txt` and `y.txt` are **not** - proving only the one selected commit was copied over, not the whole branch.
 
 **What I understood:** `cherry-pick` lets me pull just one useful commit from another branch into my current branch by its commit hash, instead of merging everything. Great for grabbing a single bug fix without the rest of the work.
+
+### Screenshot
+
+![Task 2 - git cherry-pick](screenshots/task2-cherry-pick.png)
 
 

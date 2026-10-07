@@ -1,0 +1,31 @@
+# Virtual-host routing: same IP, the Host header decides which Service answers
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vansh-ingress-vhost
+  labels:
+    app: vanshapp
+    owner: vansh
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: portal.vansh.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: vanshapp-frontend
+                port:
+                  number: 80
+    - host: api.vansh.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: vanshapp-backend
+                port:
+                  number: 8080

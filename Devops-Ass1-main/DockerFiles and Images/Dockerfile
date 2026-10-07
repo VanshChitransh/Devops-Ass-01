@@ -7,8 +7,8 @@ WORKDIR /app
 # Copy the source code
 COPY main.go ./
 
-# Build a statically linked binary named "webapp"
-RUN CGO_ENABLED=0 go build -o webapp main.go
+# Build a statically linked binary named "server"
+RUN CGO_ENABLED=0 go build -o server main.go
 
 # ---- Stage 2: Run ----
 # Start from a minimal base image - only the compiled binary is copied in,
@@ -18,10 +18,10 @@ FROM alpine:3.20
 WORKDIR /app
 
 # Copy ONLY the built binary from the build stage
-COPY --from=build /app/webapp ./
+COPY --from=build /app/server ./
 
 # The app listens on port 8080
 EXPOSE 8080
 
 # Run the binary
-CMD ["./webapp"]
+CMD ["./server"]

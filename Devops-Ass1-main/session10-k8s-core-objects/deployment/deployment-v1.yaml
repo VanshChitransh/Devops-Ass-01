@@ -1,9 +1,10 @@
+# Task 8: web Deployment version 1 (nginx:1.25-alpine)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: web
   labels:
-    app: web
+    owner: vansh
 spec:
   replicas: 3
   selector:
@@ -13,10 +14,10 @@ spec:
     metadata:
       labels:
         app: web
+        version: v1
     spec:
       containers:
-        - name: web
-          image: nginx:alpine
-          command: ["/bin/sh", "-c", "echo 'VERSION: v1' > /usr/share/nginx/html/index.html && exec nginx -g 'daemon off;'"]
+        - name: nginx
+          image: nginx:1.25-alpine
           ports:
             - containerPort: 80

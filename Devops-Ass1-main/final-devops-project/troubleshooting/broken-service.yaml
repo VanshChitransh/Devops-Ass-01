@@ -1,0 +1,11 @@
+# Lab 2: a Service whose selector matches no Pod -> no endpoints, no traffic
+apiVersion: v1
+kind: Service
+metadata:
+  name: tickethub-broken-service
+  namespace: tickethub
+  labels: {owner: vansh, lab: troubleshooting}
+spec:
+  selector:
+    app.kubernetes.io/component: backend-typo
+  ports: [{port: 8000, targetPort: 8000}]

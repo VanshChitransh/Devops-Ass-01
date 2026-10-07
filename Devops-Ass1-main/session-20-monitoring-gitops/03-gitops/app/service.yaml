@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: vansh-gitops-app
+  namespace: session20-gitops
+  labels:
+    owner: vansh
+spec:
+  selector:
+    app: vansh-gitops-app
+  ports:
+    - port: 80
+      targetPort: 5678

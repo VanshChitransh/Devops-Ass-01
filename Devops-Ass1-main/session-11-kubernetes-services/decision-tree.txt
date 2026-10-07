@@ -1,0 +1,19 @@
+SERVICE TYPE DECISION TREE (my notes)
+
+Does anything outside the cluster need to reach this workload?
+|
++-- NO --> Do clients need each pod's own address (databases, Kafka, anything with peers)?
+|          +-- YES --> HEADLESS SERVICE (clusterIP: None) + StatefulSet
+|          +-- NO  --> CLUSTERIP (the default)
+|
++-- YES --> Is the target actually an outside host (managed DB, payment API)?
+            +-- YES --> EXTERNALNAME (a DNS alias, no pods behind it)
+            +-- NO  --> Running on a public cloud?
+                        +-- YES, HTTP/HTTPS --> ONE LOADBALANCER in front of an INGRESS
+                        |                        controller, apps stay CLUSTERIP
+                        +-- YES, raw TCP/UDP --> LOADBALANCER per service
+                        +-- NO (laptop / on-prem) --> NODEPORT (or Ingress via NodePort)
+
+COST: 50 microservices, each with type: LoadBalancer
+  50 x ~$18-25/month cloud LB fee  =  ~$900-1,250 every month, before traffic
+  vs. 1 LoadBalancer -> ingress-nginx -> 50 ClusterIP services  =  1 LB fee

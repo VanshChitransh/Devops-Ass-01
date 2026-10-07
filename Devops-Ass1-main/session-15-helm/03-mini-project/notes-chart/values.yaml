@@ -1,0 +1,14 @@
+# Development defaults
+replicaCount: 1
+
+image:
+  repository: nginx
+  tag: "1.24"
+
+service:
+  port: 80
+  nodePort: 30090
+
+app:
+  name: vansh-notes-app
+  environment: development

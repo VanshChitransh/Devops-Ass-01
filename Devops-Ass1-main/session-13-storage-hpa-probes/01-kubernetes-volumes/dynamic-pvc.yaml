@@ -1,0 +1,12 @@
+# No PV written by hand: the "standard" StorageClass provisions one on demand
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dynamic-pvc
+  labels: {owner: vansh}
+spec:
+  storageClassName: standard
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 200Mi

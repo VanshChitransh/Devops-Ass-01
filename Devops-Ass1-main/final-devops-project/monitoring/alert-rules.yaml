@@ -1,0 +1,29 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: tickethub-alerts
+  namespace: tickethub
+  labels:
+    release: monitoring
+    owner: vansh
+spec:
+  groups:
+    - name: tickethub
+      rules:
+        - alert: TicketHubBackendDown
+          expr: sum(up{job=~".*backend.*", namespace="tickethub"}) == 0
+          for: 1m
+          labels: {severity: critical}
+          annotations: {summary: "No TicketHub backend target is being scraped"}
+        - alert: TicketHubHighErrorRate
+          expr: |
+            sum(rate(http_requests_total{namespace="tickethub", status=~"5.."}[5m]))
+              / sum(rate(http_requests_total{namespace="tickethub"}[5m])) > 0.05
+          for: 2m
+          labels: {severity: warning}
+          annotations: {summary: "More than 5% of TicketHub requests fail"}
+        - alert: TicketHubHighLatency
+          expr: histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{namespace="tickethub"}[5m]))) > 0.5
+          for: 2m
+          labels: {severity: warning}
+          annotations: {summary: "TicketHub p95 latency above 500 ms"}

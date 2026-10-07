@@ -1,0 +1,54 @@
+# TicketHub local stack: docker compose -f docker/docker-compose.yml up --build
+name: tickethub
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: tickethub
+      POSTGRES_PASSWORD: tickethub
+      POSTGRES_DB: tickethub
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tickethub -d tickethub"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  migrate:
+    build: ../application/backend
+    command: ["python", "-m", "app.migrate"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://tickethub:tickethub@postgres:5432/tickethub
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  backend:
+    build: ../application/backend
+    environment:
+      APP_ENV: compose
+      DATABASE_URL: postgresql+psycopg://tickethub:tickethub@postgres:5432/tickethub
+    ports:
+      - "8000:8000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/ready')\""]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  frontend:
+    build: ../application/frontend
+    environment:
+      BACKEND_URL: http://backend:8000
+    ports:
+      - "3000:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  pgdata:

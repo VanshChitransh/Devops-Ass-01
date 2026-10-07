@@ -1,26 +1,21 @@
-# Drill 2: INTENTIONALLY INVALID.
-# spec.selector.matchLabels.app (foo) does NOT match spec.template.metadata.labels.app (bar).
-# The API server rejects this because a Deployment's selector must match its pod template labels.
-# FIX: change template.metadata.labels.app to "foo" (or the selector to "bar") so the two match,
-#      then re-apply successfully.
+# Task 9 Drill 2: selector says app=foo but the pod template is labelled app=bar.
+# The API server rejects this; a client-side dry-run does not catch it.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: selector-error-demo
   labels:
-    app: selector-error-demo
+    owner: vansh
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: foo
   template:
     metadata:
       labels:
-        app: bar   # <-- MISMATCH: must equal the selector value "foo" to be valid
+        app: bar
     spec:
       containers:
         - name: nginx
-          image: nginx:alpine
-          ports:
-            - containerPort: 80
+          image: nginx:1.27-alpine

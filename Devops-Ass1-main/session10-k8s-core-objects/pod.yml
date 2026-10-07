@@ -1,12 +1,14 @@
+# Task 2: a standalone Nginx Pod with the four mandatory top-level fields
 apiVersion: v1
 kind: Pod
 metadata:
   name: nginx-pod
   labels:
     app: nginx
+    owner: vansh
 spec:
   containers:
     - name: nginx
-      image: nginx:alpine
+      image: nginx:1.27-alpine
       ports:
         - containerPort: 80

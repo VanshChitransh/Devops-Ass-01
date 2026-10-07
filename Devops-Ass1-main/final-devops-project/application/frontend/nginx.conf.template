@@ -1,0 +1,17 @@
+# Rendered by the nginx image at start-up: ${BACKEND_URL} comes from the environment.
+server {
+    listen 8080;
+    server_name _;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location /healthz { return 200 "ok\n"; add_header Content-Type text/plain; }
+
+    # Same-origin API: the browser never needs to know the backend's address
+    location /api/ { proxy_pass ${BACKEND_URL}/api/; proxy_set_header Host $host; proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; }
+    location = /docs { proxy_pass ${BACKEND_URL}/docs; }
+    location = /openapi.json { proxy_pass ${BACKEND_URL}/openapi.json; }
+    location = /metrics { proxy_pass ${BACKEND_URL}/metrics; }
+
+    location / { try_files $uri $uri/ /index.html; }
+}

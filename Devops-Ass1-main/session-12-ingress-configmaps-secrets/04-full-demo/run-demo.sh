@@ -1,31 +1,18 @@
-#!/bin/bash
-#
-# run-demo.sh — Deploy the full Session 12 multi-tier demo:
-#   ConfigMap -> Secret -> Backend (Deploy+Svc) -> Frontend (Deploy+Svc) -> Ingress
-#
-set -e
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-echo "==> [1/5] Applying ConfigMap (yatri-app-config)..."
-kubectl apply -f "${SCRIPT_DIR}/configmap.yaml"
-
-echo "==> [2/5] Applying Secret (yatri-db-secret)..."
-kubectl apply -f "${SCRIPT_DIR}/secret.yaml"
-
-echo "==> [3/5] Applying Backend Deployment + Service (yatri-backend)..."
-kubectl apply -f "${SCRIPT_DIR}/backend.yaml"
-
-echo "==> [4/5] Applying Frontend Deployment + Service (yatri-frontend)..."
-kubectl apply -f "${SCRIPT_DIR}/frontend.yaml"
-
-echo "==> [5/5] Applying Ingress (yatri-ingress)..."
-kubectl apply -f "${SCRIPT_DIR}/ingress.yaml"
-
+#!/usr/bin/env bash
+# Deploys the whole Vansh App stack in dependency order.
+set -euo pipefail
+cd "$(dirname "$0")"
+echo "==> [1/5] Applying ConfigMap (vanshapp-config)..."
+kubectl apply -f configmap.yaml
+echo "==> [2/5] Applying Secret (vanshapp-db-secret)..."
+kubectl apply -f secret.yaml
+echo "==> [3/5] Applying backend Deployment + Service (vanshapp-backend)..."
+kubectl apply -f backend.yaml
+echo "==> [4/5] Applying frontend ConfigMap + Deployment + Service (vanshapp-frontend)..."
+kubectl apply -f frontend.yaml
+echo "==> [5/5] Applying Ingress (vanshapp-ingress)..."
+kubectl apply -f ingress.yaml
 echo "==> Waiting for deployments to become ready..."
-kubectl rollout status deployment/yatri-backend
-kubectl rollout status deployment/yatri-frontend
-
-echo ""
-echo "==> Full stack deployed. Current state (app=yatri-app):"
-kubectl get configmap,secret,ingress,deploy,svc,pods -l app=yatri-app
+kubectl rollout status deployment/vanshapp-backend --timeout=120s
+kubectl rollout status deployment/vanshapp-frontend --timeout=120s
+echo "==> Done. Stack is up."

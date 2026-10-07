@@ -2,8 +2,6 @@
 
 My notes and practice for four Linux tasks: links, user creation, journalctl, and a command cheat sheet.
 
-**Environment:** everything below was run as user `vansh` on an Ubuntu 22.04 machine with hostname `vansh-devops` and systemd running, which is why `journalctl` in Task 3 returns real service logs.
-
 ## Task 1: Soft Link and Hard Link
 
 ### Hard Link
@@ -81,14 +79,9 @@ cat softlink.txt     # No such file or directory
 `adduser` is preferred on Ubuntu/Debian because it does the full job in one step: creates the home directory, copies skeleton files from `/etc/skel`, sets a default shell, and prompts for the password and user details. `useradd` is the lower-level tool that `adduser` uses underneath, which is better for scripting.
 
 ### Create a test user
-I passed the details as flags instead of answering the prompts one by one, so the run is
-reproducible:
 ```bash
-sudo adduser --gecos "Vansh Test User" --disabled-password testuser
-sudo chpasswd <<< "testuser:DevOps2026"   # set the password separately
+sudo adduser testuser
 ```
-The output shows `adduser` doing the whole job in one go: creating the group, creating the
-user, creating `/home/testuser`, and copying the skeleton files out of `/etc/skel`.
 
 Verify:
 ```bash
@@ -99,10 +92,8 @@ ls -la /home/testuser
 
 Delete when done:
 ```bash
-sudo userdel -r testuser   # -r also removes the home directory
+sudo deluser --remove-home testuser
 ```
-(`deluser` is the Debian wrapper and needs perl installed; `userdel -r` is the low-level
-equivalent and always available.)
 
 ### Screenshot
 
@@ -152,13 +143,8 @@ journalctl -n 50
 
 ### Practice: logs for a specific service
 ```bash
-systemctl status nginx --no-pager | head -8
-sudo journalctl -u nginx.service --no-pager -n 12
-sudo journalctl -p err --no-pager -n 5
+sudo journalctl -u ssh.service -e
 ```
-`--no-pager` prints straight to the terminal instead of opening `less`, and `-n` limits how
-many lines come back. The nginx logs show the full restart lifecycle: stopping, deactivated,
-starting, started.
 
 ### Screenshot
 

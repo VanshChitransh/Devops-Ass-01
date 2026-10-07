@@ -1,0 +1,19 @@
+# hostPath: a directory on the node itself is mounted into the Pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hostpath-demo
+  labels: {owner: vansh, demo: volumes}
+spec:
+  containers:
+    - name: app
+      image: busybox:1.36
+      command: ["sleep", "3600"]
+      volumeMounts:
+        - name: node-dir
+          mountPath: /data
+  volumes:
+    - name: node-dir
+      hostPath:
+        path: /tmp/vansh-hostpath-data
+        type: DirectoryOrCreate

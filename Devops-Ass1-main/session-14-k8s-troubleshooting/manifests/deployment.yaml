@@ -1,0 +1,19 @@
+# A plain nginx app: the thing the team says "is not working"
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: troubleshooting-app
+  labels: {app: troubleshooting-app, owner: vansh}
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: troubleshooting-app}
+  template:
+    metadata:
+      labels: {app: troubleshooting-app, owner: vansh}
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27-alpine
+          ports:
+            - containerPort: 80

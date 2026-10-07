@@ -1,0 +1,6 @@
+aws_region         = "ap-south-1"
+project_name       = "session19-vansh"
+vpc_cidr           = "10.20.0.0/16"
+public_subnet_cidr = "10.20.1.0/24"
+instance_type      = "t3.micro"
+bucket_name        = "vansh-24bcs10015-session19-artifacts"

@@ -1,10 +1,10 @@
+# Task 11: blue environment (3 replicas) - http-echo returns which slot answered
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app-blue
   labels:
-    app: myapp
-    slot: blue
+    owner: vansh
 spec:
   replicas: 3
   selector:
@@ -18,8 +18,8 @@ spec:
         slot: blue
     spec:
       containers:
-        - name: app
-          image: nginx:alpine
-          command: ["/bin/sh", "-c", "echo '<p>BLUE ENVIRONMENT</p>' > /usr/share/nginx/html/index.html && exec nginx -g 'daemon off;'"]
+        - name: web
+          image: hashicorp/http-echo:1.0
+          args: ["-listen=:5678", "-text=BLUE ENVIRONMENT - Vansh app v1"]
           ports:
-            - containerPort: 80
+            - containerPort: 5678

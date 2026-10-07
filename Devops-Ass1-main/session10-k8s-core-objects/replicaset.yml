@@ -1,9 +1,10 @@
+# Task 6A: ReplicaSet keeping 3 nginx pods alive
 apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
   name: nginx-rs
   labels:
-    app: nginx
+    owner: vansh
 spec:
   replicas: 3
   selector:
@@ -13,9 +14,10 @@ spec:
     metadata:
       labels:
         app: nginx
+        owner: vansh
     spec:
       containers:
         - name: nginx
-          image: nginx:alpine
+          image: nginx:1.27-alpine
           ports:
             - containerPort: 80

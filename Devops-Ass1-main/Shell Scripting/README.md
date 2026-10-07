@@ -23,17 +23,17 @@ A shell script that prints basic system information, takes input from the user, 
 # System Information Script
 
 # Store data in variables
-RUN_STAMP=$(date)
-MACHINE_ID=$(hostname)
-ACTIVE_USER=$(whoami)
+CURRENT_DATE=$(date)
+HOST_NAME=$(hostname)
+USER_NAME=$(whoami)
 
 echo "=============================="
 echo " SYSTEM INFORMATION"
 echo "=============================="
 
-echo "Current Date : $RUN_STAMP"
-echo "Hostname     : $MACHINE_ID"
-echo "Username     : $ACTIVE_USER"
+echo "Current Date : $CURRENT_DATE"
+echo "Hostname     : $HOST_NAME"
+echo "Username     : $USER_NAME"
 
 echo ""
 echo "----- Disk Usage -----"
@@ -44,19 +44,18 @@ echo "----- Running Processes -----"
 ps aux
 
 # Take input from the user
-echo ""
-read -p "Enter a name for the report directory: " REPORT_DIR
-read -p "Enter a name for the report file: " REPORT_FILE
+read -p "Enter a name for the report directory: " DIR_NAME
+read -p "Enter a name for the report file: " FILE_NAME
 
 # Create directory and file
-mkdir -p "$REPORT_DIR"
-touch "$REPORT_DIR/$REPORT_FILE"
+mkdir -p "$DIR_NAME"
+touch "$DIR_NAME/$FILE_NAME"
 
 # Store running processes in the file using output redirection
-ps aux > "$REPORT_DIR/$REPORT_FILE"
+ps aux > "$DIR_NAME/$FILE_NAME"
 
 echo ""
-echo "Running processes saved to: $REPORT_DIR/$REPORT_FILE"
+echo "Running processes saved to: $DIR_NAME/$FILE_NAME"
 ```
 
 ## How to run
@@ -66,32 +65,24 @@ chmod +x sysinfo.sh
 ```
 
 ## Sample output
-Run as user `vansh` on an Ubuntu 22.04 box (hostname `vansh-devops`):
 ```
 ==============================
  SYSTEM INFORMATION
 ==============================
-Current Date : Thu Sep  3 16:13:18 UTC 2026
-Hostname     : vansh-devops
-Username     : vansh
+Current Date : Wed Sep  2 21:38:56 IST 2026
+Hostname     : my-machine
+Username     : student
 
 ----- Disk Usage -----
 Filesystem      Size  Used Avail Use% Mounted on
-overlay         224G  8.2G  205G   4% /
-tmpfs            64M     0   64M   0% /dev
-shm              64M     0   64M   0% /dev/shm
-tmpfs           3.9G   48K  3.9G   1% /run
-tmpfs           3.9G     0  3.9G   0% /run/lock
-/dev/vda1       224G  8.2G  205G   4% /etc/hosts
+/dev/sda1        50G   16G   32G  34% /
+tmpfs           2.0G     0  2.0G   0% /dev/shm
 
 ----- Running Processes -----
-USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root           1  0.0  0.1 165668 10036 ?        Ss   16:04   0:00 /sbin/init
-root          23  0.0  0.1  48020 14532 ?        S<s  16:04   0:00 /lib/systemd/
-systemd+      39  0.0  0.1  26104 12992 ?        Ss   16:04   0:00 /lib/systemd/
-message+      41  0.0  0.0   8720  4140 ?        Ss   16:04   0:00 @dbus-daemon 
+USER     PID  %CPU %MEM    VSZ   RSS TTY   STAT START   TIME COMMAND
+root       1   0.0  0.1 168000 11000 ?     Ss   09:10   0:01 /sbin/init
+student  842   0.3  0.5  95000 40000 pts/0 S+   09:38   0:00 bash sysinfo.sh
 ...
-
 
 Enter a name for the report directory: reports
 Enter a name for the report file: processes.txt

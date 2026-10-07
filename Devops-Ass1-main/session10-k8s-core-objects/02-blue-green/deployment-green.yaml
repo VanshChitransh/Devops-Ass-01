@@ -1,10 +1,10 @@
+# Task 11: green environment (3 replicas) - http-echo returns which slot answered
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app-green
   labels:
-    app: myapp
-    slot: green
+    owner: vansh
 spec:
   replicas: 3
   selector:
@@ -18,8 +18,8 @@ spec:
         slot: green
     spec:
       containers:
-        - name: app
-          image: nginx:alpine
-          command: ["/bin/sh", "-c", "echo '<p>GREEN ENVIRONMENT</p>' > /usr/share/nginx/html/index.html && exec nginx -g 'daemon off;'"]
+        - name: web
+          image: hashicorp/http-echo:1.0
+          args: ["-listen=:5678", "-text=GREEN ENVIRONMENT - Vansh app v2"]
           ports:
-            - containerPort: 80
+            - containerPort: 5678

@@ -2,8 +2,6 @@
 
 Practice of common Linux networking commands, with their output and a short explanation of what each one does.
 
-**Environment:** all commands were run as user `vansh` on an Ubuntu 22.04 machine with hostname `vansh-devops`, so every screenshot below is from my own box.
-
 ## 1. ping
 ```bash
 ping -c 4 google.com
@@ -36,9 +34,9 @@ Displays the routing table, including the default gateway (the router that traff
 
 ## 4. netstat / ss
 ```bash
-sudo ss -tulpn
+ss -tulpn
 ```
-Lists network connections, listening ports, and the programs using them. `ss` is the faster modern replacement for `netstat`. Flags: `-t` TCP, `-u` UDP, `-l` listening, `-p` process, `-n` numeric. `sudo` is needed for the `-p` column, otherwise the owning process is hidden.
+Lists network connections, listening ports, and the programs using them. `ss` is the faster modern replacement for `netstat`. Flags: `-t` TCP, `-u` UDP, `-l` listening, `-p` process, `-n` numeric.
 
 **What I understood:** This shows which ports are open and which service is listening on each one. Useful to check if a server (like SSH on port 22) is running.
 
@@ -46,9 +44,9 @@ Lists network connections, listening ports, and the programs using them. `ss` is
 
 ## 5. curl
 ```bash
-curl -sI https://www.google.com
+curl -I https://www.google.com
 ```
-Transfers data to or from a server. `-I` fetches only the HTTP response headers; `-s` silences the progress meter so only the headers are left. Commonly used to test APIs and web endpoints.
+Transfers data to or from a server. `-I` fetches only the HTTP response headers. Commonly used to test APIs and web endpoints.
 
 **What I understood:** `curl` lets me talk to a web server from the terminal. The headers tell me the status code (e.g. `200 OK`) and server details.
 
@@ -56,7 +54,7 @@ Transfers data to or from a server. `-I` fetches only the HTTP response headers;
 
 ## 6. wget
 ```bash
-wget https://example.com/
+wget https://example.com/index.html
 ```
 Downloads files from the internet over HTTP, HTTPS, or FTP. Unlike curl, it saves the file to disk by default.
 
@@ -76,9 +74,9 @@ Queries DNS to resolve a domain name into its IP address (and vice versa).
 
 ## 8. traceroute
 ```bash
-sudo traceroute -I -m 12 google.com
+traceroute -I google.com
 ```
-Shows the full path (each router/hop) that packets take to reach a destination, with the time at each hop. `-I` uses ICMP probes (which more routers answer) and `-m 12` caps it at 12 hops.
+Shows the full path (each router/hop) that packets take to reach a destination, with the time at each hop. I used `-I` (ICMP echo probes instead of UDP) because the default UDP probes were dropped by the Docker Desktop NAT on my machine and every hop after the gateway showed `* * *`.
 
 **What I understood:** It shows every stop between my machine and the destination, which helps find where a connection slows down or breaks.
 

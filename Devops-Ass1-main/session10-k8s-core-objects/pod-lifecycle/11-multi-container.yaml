@@ -1,16 +1,13 @@
-# Two containers in one pod (app + logging sidecar) => READY 2/2.
+# App + logging sidecar sharing one Pod -> READY 2/2
 apiVersion: v1
 kind: Pod
 metadata:
   name: lifecycle-multi-container
-  labels:
-    demo: lifecycle
+  labels: {owner: vansh, demo: lifecycle}
 spec:
   containers:
     - name: app
-      image: nginx:alpine
-      ports:
-        - containerPort: 80
+      image: nginx:1.27-alpine
     - name: sidecar
-      image: busybox
-      command: ["sh", "-c", "while true; do echo sidecar log $(date); sleep 5; done"]
+      image: busybox:1.36
+      command: ["sh", "-c", "while true; do echo \"[sidecar] shipping logs for $(hostname)\"; sleep 10; done"]

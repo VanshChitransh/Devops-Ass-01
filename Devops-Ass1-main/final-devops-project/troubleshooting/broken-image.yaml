@@ -1,0 +1,20 @@
+# Lab 1: a backend Deployment whose image tag does not exist -> ImagePullBackOff
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tickethub-broken-image
+  namespace: tickethub
+  labels: {owner: vansh, lab: troubleshooting}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: tickethub-broken-image}
+  template:
+    metadata:
+      labels: {app: tickethub-broken-image}
+    spec:
+      containers:
+        - name: api
+          image: tickethub-backend:does-not-exist
+          imagePullPolicy: IfNotPresent
+          ports: [{containerPort: 8000}]

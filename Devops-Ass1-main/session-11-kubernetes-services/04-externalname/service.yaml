@@ -1,7 +1,10 @@
+# ExternalName: an in-cluster DNS alias (CNAME) to an outside hostname, no ClusterIP, no endpoints
 apiVersion: v1
 kind: Service
 metadata:
   name: external-database-service
+  labels:
+    owner: vansh
 spec:
   type: ExternalName
   externalName: api.github.com

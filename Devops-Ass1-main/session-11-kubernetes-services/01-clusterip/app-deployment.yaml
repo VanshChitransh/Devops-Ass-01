@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: web-app-clusterip
   labels:
-    app: web-clusterip
+    owner: vansh
 spec:
   replicas: 3
   selector:
@@ -13,9 +13,10 @@ spec:
     metadata:
       labels:
         app: web-clusterip
+        owner: vansh
     spec:
       containers:
         - name: nginx
-          image: nginx:alpine
+          image: nginx:1.27-alpine
           ports:
             - containerPort: 80

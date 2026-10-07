@@ -1,0 +1,7 @@
+apiVersion: 1
+providers:
+  - name: vansh-dashboards
+    folder: ""
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards

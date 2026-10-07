@@ -1,0 +1,8 @@
+# Local kind/minikube: images loaded into the cluster, ingress on tickethub.local
+backend:
+  image: {repository: tickethub-backend, tag: local, pullPolicy: Never}
+frontend:
+  image: {repository: tickethub-frontend, tag: local, pullPolicy: Never}
+ingress:
+  enabled: true
+  host: tickethub.local

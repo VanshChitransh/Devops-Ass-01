@@ -1,25 +1,25 @@
+# Task 12: canary release, 1 replica (~10% of traffic)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app-canary
   labels:
-    app: myapp-canary
-    version: canary
+    owner: vansh
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: myapp-canary
-      version: canary
+      track: canary
   template:
     metadata:
       labels:
         app: myapp-canary
-        version: canary
+        track: canary
     spec:
       containers:
-        - name: app
-          image: nginx:alpine
-          command: ["/bin/sh", "-c", "echo 'CANARY v2' > /usr/share/nginx/html/index.html && exec nginx -g 'daemon off;'"]
+        - name: web
+          image: hashicorp/http-echo:1.0
+          args: ["-listen=:5678", "-text=CANARY v2"]
           ports:
-            - containerPort: 80
+            - containerPort: 5678

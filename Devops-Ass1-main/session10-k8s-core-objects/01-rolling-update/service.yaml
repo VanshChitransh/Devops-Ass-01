@@ -3,11 +3,12 @@ kind: Service
 metadata:
   name: app-rolling
   labels:
-    app: app-rolling
+    owner: vansh
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: app-rolling
   ports:
     - port: 80
       targetPort: 80
+      nodePort: 30010

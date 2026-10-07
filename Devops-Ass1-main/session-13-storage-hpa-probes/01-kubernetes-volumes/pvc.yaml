@@ -1,0 +1,12 @@
+# A claim that matches vansh-pv (same class, size that fits, same access mode)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: vansh-pvc
+  labels: {owner: vansh}
+spec:
+  storageClassName: manual
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 500Mi

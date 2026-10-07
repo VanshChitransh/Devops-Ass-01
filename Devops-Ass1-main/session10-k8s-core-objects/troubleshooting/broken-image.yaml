@@ -1,23 +1,24 @@
-# Drill 1: unresolvable image tag stalls the rollout (new surged pods stay ImagePullBackOff).
-# Recover with: kubectl rollout undo deployment/yatri-backend
+# Task 9 Drill 1: same Deployment as deployment/deployment-v1.yaml but with a tag that does not exist.
+# Applying this on top of the healthy v1 stalls the rollout; the old pods keep serving.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: yatri-backend
+  name: web
   labels:
-    app: yatri-backend
+    owner: vansh
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: yatri-backend
+      app: web
   template:
     metadata:
       labels:
-        app: yatri-backend
+        app: web
+        version: broken
     spec:
       containers:
-        - name: yatri-backend
-          image: nginx:broken-tag-999
+        - name: nginx
+          image: nginx:1.99-does-not-exist
           ports:
             - containerPort: 80

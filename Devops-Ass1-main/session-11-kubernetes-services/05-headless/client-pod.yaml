@@ -3,9 +3,10 @@ kind: Pod
 metadata:
   name: headless-dns-client
   labels:
-    app: headless-dns-client
+    owner: vansh
+    role: client
 spec:
   containers:
-    - name: busybox
-      image: busybox
-      command: ["sleep", "3600"]
+    - name: client
+      image: curlimages/curl:8.10.1
+      command: ["sleep", "infinity"]

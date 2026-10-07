@@ -1,0 +1,12 @@
+# The image tag has a typo, so the kubelet can never pull it
+apiVersion: v1
+kind: Pod
+metadata:
+  name: project-broken-pod
+  labels: {owner: vansh}
+spec:
+  containers:
+    - name: nginx
+      image: nginx:1.27-alpne
+      ports:
+        - containerPort: 80

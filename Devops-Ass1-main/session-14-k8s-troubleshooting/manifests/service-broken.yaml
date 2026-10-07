@@ -1,0 +1,12 @@
+# Same Service, but the selector names a label no Pod carries -> no endpoints
+apiVersion: v1
+kind: Service
+metadata:
+  name: troubleshooting-service
+  labels: {owner: vansh}
+spec:
+  selector:
+    app: wrong-app
+  ports:
+    - port: 80
+      targetPort: 80

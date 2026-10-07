@@ -1,0 +1,29 @@
+# Values for prometheus-community/kube-prometheus-stack, release name "monitoring", namespace "monitoring".
+# helm upgrade --install monitoring prometheus-community/kube-prometheus-stack -n monitoring --create-namespace -f monitoring/prometheus-values.yaml
+prometheus:
+  prometheusSpec:
+    retention: 2d
+    # scrape every ServiceMonitor that carries release=monitoring (the TicketHub chart sets that label)
+    serviceMonitorSelectorNilUsesHelmValues: true
+    ruleSelectorNilUsesHelmValues: true
+    resources:
+      requests: {cpu: 100m, memory: 400Mi}
+      limits: {memory: 800Mi}
+grafana:
+  adminPassword: admin
+  grafana.ini:
+    auth.anonymous:
+      enabled: true          # classroom only: lets the dashboard open without a login
+      org_role: Viewer
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard   # ConfigMaps with this label become dashboards (monitoring/grafana-dashboard.yaml)
+  resources:
+    requests: {cpu: 50m, memory: 128Mi}
+alertmanager:
+  enabled: false          # alerts are evaluated by Prometheus; no paging in the classroom setup
+nodeExporter:
+  enabled: true
+kubeStateMetrics:
+  enabled: true

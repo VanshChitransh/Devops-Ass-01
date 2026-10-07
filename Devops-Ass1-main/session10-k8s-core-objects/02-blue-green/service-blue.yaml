@@ -1,10 +1,10 @@
-# Live traffic points at Blue (slot=blue).
+# Task 11: myapp-service pointing at the blue slot
 apiVersion: v1
 kind: Service
 metadata:
   name: myapp-service
   labels:
-    app: myapp
+    owner: vansh
 spec:
   type: NodePort
   selector:
@@ -12,5 +12,5 @@ spec:
     slot: blue
   ports:
     - port: 80
-      targetPort: 80
+      targetPort: 5678
       nodePort: 30020

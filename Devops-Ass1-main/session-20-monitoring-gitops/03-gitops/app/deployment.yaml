@@ -1,0 +1,29 @@
+# Desired state lives here, in Git. Argo CD makes the cluster match it.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vansh-gitops-app
+  namespace: session20-gitops
+  labels:
+    app: vansh-gitops-app
+    owner: vansh
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vansh-gitops-app
+  template:
+    metadata:
+      labels:
+        app: vansh-gitops-app
+        owner: vansh
+    spec:
+      containers:
+        - name: web
+          image: hashicorp/http-echo:1.0
+          args: ["-listen=:5678", "-text=Hello from Vansh's GitOps app, deployed by Argo CD"]
+          ports:
+            - containerPort: 5678
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {cpu: 50m, memory: 32Mi}

@@ -1,10 +1,10 @@
-# THE CUTOVER: same Service, selector flipped to Green (slot=green) => instant traffic switch.
+# Task 11: myapp-service pointing at the green slot
 apiVersion: v1
 kind: Service
 metadata:
   name: myapp-service
   labels:
-    app: myapp
+    owner: vansh
 spec:
   type: NodePort
   selector:
@@ -12,5 +12,5 @@ spec:
     slot: green
   ports:
     - port: 80
-      targetPort: 80
+      targetPort: 5678
       nodePort: 30020

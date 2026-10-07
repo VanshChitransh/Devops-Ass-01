@@ -1,0 +1,23 @@
+# Kept outside app/ on purpose: Argo CD must not manage its own Application object.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vansh-gitops-app
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io   # deleting the Application also deletes what it deployed
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/VanshChitransh/Devops-Ass-01.git
+    targetRevision: main
+    path: session-20-monitoring-gitops/03-gitops/app
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: session20-gitops
+  syncPolicy:
+    automated:
+      prune: true      # objects removed from Git are removed from the cluster
+      selfHeal: true   # manual changes in the cluster are reverted to match Git
+    syncOptions:
+      - CreateNamespace=true

@@ -1,6 +1,6 @@
 import React from "react";
 
-function HelloCard() {
+function App() {
   return (
     <div>
       <h1>Hello World from Vansh's React app!</h1>
@@ -8,4 +8,4 @@ function HelloCard() {
   );
 }
 
-export default HelloCard;
+export default App;

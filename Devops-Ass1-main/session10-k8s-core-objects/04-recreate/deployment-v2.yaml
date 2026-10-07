@@ -1,9 +1,10 @@
+# Task 13: app-recreate v2 - strategy Recreate (all old pods die before new ones start)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app-recreate
   labels:
-    app: app-recreate
+    owner: vansh
 spec:
   replicas: 3
   strategy:
@@ -15,10 +16,11 @@ spec:
     metadata:
       labels:
         app: app-recreate
+        version: v2
     spec:
       containers:
-        - name: app
-          image: nginx:alpine
-          command: ["/bin/sh", "-c", "echo 'VERSION: v2 (UPGRADED)' > /usr/share/nginx/html/index.html && exec nginx -g 'daemon off;'"]
+        - name: web
+          image: hashicorp/http-echo:1.0
+          args: ["-listen=:5678", "-text=VERSION: v2 (UPGRADED)"]
           ports:
-            - containerPort: 80
+            - containerPort: 5678

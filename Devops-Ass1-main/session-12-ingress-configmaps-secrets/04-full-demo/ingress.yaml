@@ -1,32 +1,31 @@
+# Path-based routing on one host: / -> frontend, /api/... -> backend (with /api stripped)
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: yatri-ingress
+  name: vanshapp-ingress
   labels:
-    app: yatri-app
+    app: vanshapp
+    owner: vansh
   annotations:
-    # Rewrite everything captured by group 2 of the path regex to the service root.
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
     nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
   rules:
-    - host: yatri.local
+    - host: vanshapp.local
       http:
         paths:
-          # Root traffic -> frontend (Nginx)
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: yatri-frontend
-                port:
-                  number: 80
-          # /api and everything under it -> backend (Python API), stripped by rewrite-target
           - path: /api(/|$)(.*)
             pathType: ImplementationSpecific
             backend:
               service:
-                name: yatri-backend
+                name: vanshapp-backend
                 port:
                   number: 8080
+          - path: /()(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vanshapp-frontend
+                port:
+                  number: 80

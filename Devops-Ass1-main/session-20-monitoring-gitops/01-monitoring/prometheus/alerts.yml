@@ -1,0 +1,42 @@
+groups:
+  - name: vansh-app-alerts
+    rules:
+      - alert: AppDown
+        expr: up{job="app"} == 0
+        for: 15s
+        labels: {severity: critical}
+        annotations:
+          summary: "The demo app cannot be scraped"
+          description: "Prometheus has not been able to reach app:8000 for 15 seconds."
+
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(http_requests_total{status=~"5.."}[1m]))
+            / sum(rate(http_requests_total[1m])) > 0.2
+        for: 30s
+        labels: {severity: warning}
+        annotations:
+          summary: "More than 20% of requests are failing"
+          description: "5xx share over the last minute is {{ $value | humanizePercentage }}."
+
+      - alert: HighLatency
+        expr: histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket[1m]))) > 1
+        for: 30s
+        labels: {severity: warning}
+        annotations:
+          summary: "p95 latency above 1 second"
+          description: "95th percentile response time is {{ $value | humanizeDuration }}."
+
+      - alert: HostHighCPU
+        expr: 100 * (1 - avg(rate(node_cpu_seconds_total{mode="idle"}[1m]))) > 80
+        for: 1m
+        labels: {severity: warning}
+        annotations:
+          summary: "Host CPU above 80%"
+
+      - alert: HostHighMemory
+        expr: 100 * (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) > 85
+        for: 1m
+        labels: {severity: warning}
+        annotations:
+          summary: "Host memory above 85%"

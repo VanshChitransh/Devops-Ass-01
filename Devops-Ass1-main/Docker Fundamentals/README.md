@@ -133,7 +133,11 @@ docker rmi <image>       # remove an image
 - `.dockerignore` stops `node_modules` from being copied into the image and slowing the build.
 
 ## Screenshots
-Each screenshot shows the app running in my container with my personalised greeting.
+Terminal view: my six images, all six containers running, and `curl` against every port:
+
+![docker images, docker ps and curl output](screenshots/terminal.png)
+
+Each browser screenshot below shows the app running in my container with my personalised greeting.
 
 - Node.js: ![nodejs](screenshots/nodejs.png)
 - Python: ![python](screenshots/python.png)

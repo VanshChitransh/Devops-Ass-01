@@ -1,12 +1,13 @@
+# Task 4: short-lived batch Pod to watch ContainerCreating -> Running -> Completed
 apiVersion: v1
 kind: Pod
 metadata:
   name: hello-pod
   labels:
-    app: hello
+    owner: vansh
 spec:
   restartPolicy: Never
   containers:
     - name: hello
-      image: busybox
-      command: ["sh", "-c", "echo Hello from busybox && sleep 3"]
+      image: busybox:1.36
+      command: ["sh", "-c", "echo 'Hello from Vansh busybox pod'; sleep 3"]

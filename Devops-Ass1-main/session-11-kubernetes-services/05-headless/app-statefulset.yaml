@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   name: web-stateful
   labels:
-    app: web-headless
+    owner: vansh
 spec:
   serviceName: web-service-headless
   replicas: 3
@@ -14,9 +14,11 @@ spec:
     metadata:
       labels:
         app: web-headless
+        owner: vansh
     spec:
       containers:
         - name: nginx
-          image: nginx:alpine
+          image: nginx:1.27-alpine
           ports:
             - containerPort: 80
+              name: http

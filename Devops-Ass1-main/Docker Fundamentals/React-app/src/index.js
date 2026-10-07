@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import HelloCard from "./App";
+import App from "./App";
 
-const reactRoot = ReactDOM.createRoot(document.getElementById("root"));
-reactRoot.render(<HelloCard />);
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);

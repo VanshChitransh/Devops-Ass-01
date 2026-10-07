@@ -1,0 +1,12 @@
+# Argo CD watches this file. The CI pipeline rewrites both tags with the commit SHA after a green run.
+backend:
+  image:
+    repository: ghcr.io/vanshchitransh/devops-ass-01/tickethub-backend
+    tag: "latest"
+frontend:
+  image:
+    repository: ghcr.io/vanshchitransh/devops-ass-01/tickethub-frontend
+    tag: "latest"
+ingress:
+  enabled: true
+  host: tickethub.local

@@ -1,0 +1,8 @@
+# Copy to terraform.tfvars and adjust. No credentials go here: use `aws configure`.
+aws_region         = "ap-south-1"
+project_name       = "tickethub"
+environment        = "dev"
+vpc_cidr           = "10.30.0.0/16"
+kubernetes_version = "1.31"
+node_instance_type = "t3.medium"
+node_desired_size  = 2

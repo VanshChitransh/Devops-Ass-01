@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: yatri-app-config
+  name: vanshapp-config
   labels:
-    app: yatri-app
+    app: vanshapp
+    owner: vansh
 data:
-  ENVIRONMENT: production
-  LOG_LEVEL: INFO
+  APP_NAME: "Vansh App"
+  ENVIRONMENT: "production"
+  LOG_LEVEL: "INFO"
   PORT: "8080"
-  DEFAULT_CURRENCY: INR
-  MAX_BOOKING_DAYS: "30"
+  DEFAULT_CURRENCY: "INR"

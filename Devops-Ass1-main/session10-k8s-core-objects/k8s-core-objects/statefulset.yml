@@ -1,27 +1,27 @@
-# Headless Service required for stable StatefulSet network identities (mysql-0.mysql, ...).
+# Task 6B: MySQL StatefulSet with a headless Service and one PVC per pod
 apiVersion: v1
 kind: Service
 metadata:
   name: mysql
   labels:
     app: mysql
+    owner: vansh
 spec:
   clusterIP: None
   selector:
     app: mysql
   ports:
-    - name: mysql
-      port: 3306
-      targetPort: 3306
+    - port: 3306
+      name: mysql
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mysql
   labels:
-    app: mysql
+    owner: vansh
 spec:
-  serviceName: "mysql"
+  serviceName: mysql
   replicas: 3
   selector:
     matchLabels:
@@ -30,19 +30,24 @@ spec:
     metadata:
       labels:
         app: mysql
+        owner: vansh
     spec:
       containers:
         - name: mysql
           image: mysql:8.0
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value: rootpass
+              value: vansh-root-pass
           ports:
-            - name: mysql
-              containerPort: 3306
+            - containerPort: 3306
+              name: mysql
           volumeMounts:
             - name: data
               mountPath: /var/lib/mysql
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 100m
   volumeClaimTemplates:
     - metadata:
         name: data

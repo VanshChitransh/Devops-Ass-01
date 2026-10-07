@@ -1,14 +1,15 @@
+# LoadBalancer: asks the cloud provider (or minikube tunnel) for an external IP
 apiVersion: v1
 kind: Service
 metadata:
   name: web-service-loadbalancer
   labels:
-    app: web-loadbalancer
+    owner: vansh
 spec:
   type: LoadBalancer
   selector:
     app: web-loadbalancer
   ports:
-    - protocol: TCP
-      port: 80
+    - port: 80
       targetPort: 80
+      protocol: TCP
